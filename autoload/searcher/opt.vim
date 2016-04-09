@@ -3,7 +3,10 @@ let s:case_sensitive = 1
 
 function! searcher#opt#GetPrefixOptions()
     if g:searcher_cmd == 'sift'
-        let options = '--binary-skip --no-color -n --context ' . g:searcher_context
+        let options = '--binary-skip --no-color -n -C ' . g:searcher_context
+        return split(options)
+    elseif index(['ack', 'ag'], g:searcher_cmd) >= 0
+        let options = '--nocolor --nogroup -C ' . g:searcher_context
         return split(options)
     endif
     return split(g:searcher_prefix_options)
