@@ -25,9 +25,9 @@ for argv in argv_list[:-2]:
 vim.command("let s:keyword = '%s'" % argv_list[-2])
 vim.command("let parsed_argv = pyeval('argv_list')")
 EOF
-    let options = searcher#opt#GetPrefixOptions()
-    call extend(options, parsed_argv)
-    return options
+let options = searcher#opt#GetPrefixOptions()
+call extend(options, parsed_argv)
+return options
 endfunction
 
 function! searcher#opt#GetCaseSensitive()
