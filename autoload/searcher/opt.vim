@@ -3,13 +3,13 @@ let s:case_sensitive = 1
 
 function! searcher#opt#GetPrefixOptions()
     if g:searcher_cmd == 'sift'
-        let options = '--binary-skip --no-color -n -C ' . g:searcher_context
-        return split(options)
+        let prefix_options = '--binary-skip --no-color -n -C ' . g:searcher_context
+        return prefix_options
     elseif index(['ack', 'ag'], g:searcher_cmd) >= 0
-        let options = '--nocolor --nogroup -C ' . g:searcher_context
-        return split(options)
+        let prefix_options = '--nocolor --nogroup -C ' . g:searcher_context
+        return prefix_options
     endif
-    return split(g:searcher_prefix_options)
+    return g:searcher_prefix_options
 endfunction
 
 function! searcher#opt#ParseOptions(argv)
@@ -22,12 +22,12 @@ vim.command('let s:case_sensitive = 1')
 for argv in argv_list[:-2]:
     if argv in case_sensitive_options:
         vim.command('let s:case_sensitive = 0')
-vim.command("let s:keyword = '%s'" % argv_list[-2])
-vim.command("let parsed_argv = pyeval('argv_list')")
+vim.command("let s:keyword = pyeval('argv_list[-2]')")
+argv_list[-2] = '"%s"' % argv_list[-2]
+vim.command("let parsed_argv = '%s'" % ' '.join(argv_list))
 EOF
-    let options = searcher#opt#GetPrefixOptions()
-    call extend(options, parsed_argv)
-    return options
+let prefix_options = searcher#opt#GetPrefixOptions()
+return prefix_options . ' ' . parsed_argv
 endfunction
 
 function! searcher#opt#GetCaseSensitive()
