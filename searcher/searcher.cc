@@ -26,8 +26,8 @@ static std::vector<std::string> Split(const std::string &line) {
   return tokens;
 }
 
-static bool FileExists(const std::string &file_name) {
-  FILE *file = fopen(file_name.c_str(), "r");
+static bool FileExists(const std::string &filename) {
+  FILE *file = fopen(filename.c_str(), "r");
   bool exists = (file != NULL);
   fclose(file);
   file = NULL;
