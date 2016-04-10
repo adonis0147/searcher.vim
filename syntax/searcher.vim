@@ -1,6 +1,6 @@
 syntax match searcherFilename /^.*\ze$/
-syntax match searcherMatchedLine /^\d\+:/
-syntax match searcherNotMatchedLine /^\d\+-/
+syntax match searcherMatchedLine /^\d\+: /
+syntax match searcherNotMatchedLine /^\d\+- /
 syntax match searcherSepLine /^--/
 
 highlight def link searcherFilename       Title
