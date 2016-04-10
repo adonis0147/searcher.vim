@@ -7,6 +7,14 @@
 #include <regex>
 #include <vector>
 
+#if _WIN32
+#define POPEN _popen
+#define PCLOSE _pclose
+#else
+#define POPEN popen
+#define PCLOSE pclose
+#endif
+
 static std::vector<std::string> Split(const std::string &line) {
   std::vector<std::string> tokens;
   std::regex pattern("([-:]\\d+[-:])");
@@ -44,7 +52,7 @@ static void ParseTokens(
       filename_stream << tokens[i] << tokens[i + 1];
       if (FileExists(filename_stream.str())) {
         content_stream << tokens[i + 2].substr(1);
-        for (int i = 0; i < indent; ++ i) content_stream << ' ';
+        for (int j = 0; j < indent; ++ j) content_stream << ' ';
         for (size_t j = i + 3; j < tokens.size(); ++ j)
           content_stream << tokens[j];
         goto out;
@@ -104,7 +112,7 @@ static PyObject *Search(PyObject *self, PyObject *args) {
   PyObject *py_text = NULL, *py_index = NULL, *py_files = NULL;
   PyObject *py_result = NULL;
 
-  FILE *result = popen(cmd, "r");
+  FILE *result = POPEN(cmd, "r");
   if (result == NULL) goto out;
 
   Parse(result, indent, text, index, files);
@@ -119,7 +127,7 @@ static PyObject *Search(PyObject *self, PyObject *args) {
         py_index, Py_BuildValue("i", i), Py_BuildValue("i", index[i]));
   py_result = PyTuple_Pack(3, py_text, py_index, py_files);
 out:
-  pclose(result);
+  PCLOSE(result);
   result = NULL;
   if (py_result)
     return py_result;
