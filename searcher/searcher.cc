@@ -60,10 +60,8 @@ static void ParseTokens(
       content_stream << tokens[i].substr(1);
       for (int j = 0; j < indent; ++ j) content_stream << ' ';
       for (size_t j = i + 1; j < tokens.size(); ++ j)
-      content_stream << tokens[j];
-      goto out;
+        content_stream << tokens[j];
     }
-out:
     filename = filename_stream.str();
     content = content_stream.str();
   }
