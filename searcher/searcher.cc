@@ -49,16 +49,19 @@ static void ParseTokens(
     content_stream << tokens[2];
     content = content_stream.str();
   } else {
-    filename_stream << tokens[0];
-    for (size_t i = 1; i < tokens.size(); i += 2) {
-      filename_stream << tokens[i] << tokens[i + 1];
-      if (FileExists(filename_stream.str())) {
-        content_stream << tokens[i + 2].substr(1);
-        for (int j = 0; j < indent; ++ j) content_stream << ' ';
-        for (size_t j = i + 3; j < tokens.size(); ++ j)
-          content_stream << tokens[j];
-        goto out;
-      }
+    size_t i = 0;
+    filename_stream << tokens[i];
+    while (!FileExists(filename_stream.str()) && i < tokens.size()) {
+      filename_stream << tokens[i + 1] << tokens[i + 2];
+      i += 2;
+    }
+    ++ i;
+    if (i < tokens.size() - 1) {
+      content_stream << tokens[i].substr(1);
+      for (int j = 0; j < indent; ++ j) content_stream << ' ';
+      for (size_t j = i + 1; j < tokens.size(); ++ j)
+      content_stream << tokens[j];
+      goto out;
     }
 out:
     filename = filename_stream.str();
