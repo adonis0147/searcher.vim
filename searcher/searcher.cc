@@ -51,7 +51,7 @@ static void ParseTokens(
   } else {
     size_t i = 0;
     filename_stream << tokens[i];
-    while (!FileExists(filename_stream.str()) && i < tokens.size()) {
+    while (!FileExists(filename_stream.str()) && i + 2 < tokens.size()) {
       filename_stream << tokens[i + 1] << tokens[i + 2];
       i += 2;
     }
