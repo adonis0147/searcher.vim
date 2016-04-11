@@ -29,8 +29,10 @@ static std::vector<std::string> Split(const std::string &line) {
 static bool FileExists(const std::string &filename) {
   FILE *file = fopen(filename.c_str(), "r");
   bool exists = (file != NULL);
-  fclose(file);
-  file = NULL;
+  if (file) {
+    fclose(file);
+    file = NULL;
+  }
   return exists;
 }
 
