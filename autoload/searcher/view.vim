@@ -1,4 +1,4 @@
-let s:REGEX_PREFIX_FOR_KEYWORD = '\(^\d\+:.*\)\@<='
+let s:REGEX_PREFIX_FOR_KEYWORD = '(^\d+:.*)@<='
 let s:keyword_pattern          = ''
 let s:highlight_id             = -1
 
@@ -27,7 +27,7 @@ function! searcher#view#highlight(keyword)
     else
         let regex_for_case = '\c'
     endif
-    let s:keyword_pattern = regex_for_case . s:REGEX_PREFIX_FOR_KEYWORD . a:keyword
+    let s:keyword_pattern = '\v' . regex_for_case . s:REGEX_PREFIX_FOR_KEYWORD . a:keyword
     if s:highlight_id != -1
         try
             call matchdelete(s:highlight_id)
