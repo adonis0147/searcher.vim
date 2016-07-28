@@ -125,18 +125,24 @@ static PyObject *Search(PyObject *self, PyObject *args) {
   for (size_t i = 0; i < files.size(); ++ i)
     PyList_SetItem(py_files, i, Py_BuildValue("s", files[i].c_str()));
   py_index = PyDict_New();
-  for (size_t i = 1; i < index.size(); ++ i)
-    PyDict_SetItem(
-        py_index, Py_BuildValue("i", i), Py_BuildValue("i", index[i]));
+  for (size_t i = 1; i < index.size(); ++ i) {
+    PyObject *key = Py_BuildValue("i", i);
+    PyObject *value = Py_BuildValue("i", index[i]);
+    PyDict_SetItem(py_index, key, value);
+    Py_DECREF(key);
+    Py_DECREF(value);
+  }
   py_result = PyTuple_Pack(3, py_text, py_index, py_files);
+  Py_DECREF(py_text);
+  Py_DECREF(py_index);
+  Py_DECREF(py_files);
 out:
   PCLOSE(result);
   result = NULL;
   if (py_result)
     return py_result;
   else
-    return PyTuple_Pack(
-      3, Py_BuildValue("s", ""), PyDict_New(), PyList_New(0));
+    return Py_BuildValue("s{}[]", "");
 }
 
 static PyMethodDef searcherMethods[] = {
