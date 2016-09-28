@@ -14,7 +14,7 @@ call searcher#buf#Init(text, files, index)
 endfunction
 
 function! searcher#cmd#Build(argv)
-    let parsed_options =  searcher#opt#ParseOptions(a:argv)
+    let parsed_options = searcher#opt#ParseOptions(a:argv)
     let cmd = g:searcher_cmd . ' ' . parsed_options
     return cmd
 endfunction

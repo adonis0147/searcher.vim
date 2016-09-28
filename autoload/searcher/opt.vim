@@ -5,6 +5,9 @@ function! searcher#opt#GetPrefixOptions()
     if g:searcher_cmd == 'sift'
         let prefix_options = '--binary-skip --no-color -n -C ' . g:searcher_context
         return prefix_options
+    elseif g:searcher_cmd == 'rg'
+        let prefix_options = '--color=nerver --no-heading -n -C ' . g:searcher_context
+        return prefix_options
     elseif index(['ack', 'ag', 'pt'], g:searcher_cmd) >= 0
         let prefix_options = '--nocolor --nogroup -C ' . g:searcher_context
         return prefix_options
