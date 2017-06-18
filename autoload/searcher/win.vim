@@ -1,161 +1,118 @@
-let s:MAIN_BUF_NAME = '__searcher__'
-let s:caller_buf_name = ''
-autocmd BufEnter,BufLeave * execute 'call searcher#win#AutoCloseHiddensearcherBuf()'
-
+let s:win_id = 0
+let s:caller_win_id = 0
 let s:operation_mappings = {
-    \ 'open'    : 'searcher#win#JumpToFile',
-    \ 'opens'   : 'searcher#win#JumpToFileSilently',
-    \ 'tab'     : 'searcher#win#JumpToTab',
-    \ 'tabs'    : 'searcher#win#JumpToTabSilently',
-    \ 'split'   : 'searcher#win#JumpToSplit',
-    \ 'splits'  : 'searcher#win#JumpToSplitSilently',
-    \ 'vsplit'  : 'searcher#win#JumpToVSplit',
-    \ 'vsplits' : 'searcher#win#JumpToVSplitSilently',
-    \}
-
-function! searcher#win#SetCallerBufName(buf_name)
-    let s:caller_buf_name = a:buf_name
-endfunction
-
-function! searcher#win#GetCallerBufName()
-    return s:caller_buf_name
-endfunction
-
-function! searcher#win#InitCallerBufWin()
-    let current_buf_name = bufname('%')
-    call searcher#win#SetCallerBufName(current_buf_name)
-    autocmd BufHidden,BufDelete <buffer> execute 'call searcher#win#SetCallerBufName("")'
-endfunction
+	\ 'open'    : 'searcher#win#JumpToFile',
+	\ 'opens'   : 'searcher#win#JumpToFileSilently',
+	\ 'tab'     : 'searcher#win#JumpToTab',
+	\ 'tabs'    : 'searcher#win#JumpToTabSilently',
+	\ 'split'   : 'searcher#win#JumpToSplit',
+	\ 'splits'  : 'searcher#win#JumpToSplitSilently',
+	\ 'vsplit'  : 'searcher#win#JumpToVSplit',
+	\ 'vsplits' : 'searcher#win#JumpToVSplitSilently',
+	\}
 
 function! searcher#win#Open()
-    let current_buf_name = bufname('%')
-    if current_buf_name != '__searcher__' && searcher#win#GetCallerBufName() == ''
-        call searcher#win#InitCallerBufWin()
-    endif
-
-    if searcher#win#Focus(s:MAIN_BUF_NAME) == 0
-        execute 'silent keepalt topleft vertical split ' . s:MAIN_BUF_NAME
-        call searcher#win#InitsearcherBufWin()
-    endif
+	let s:caller_win_id = win_getid()
+	if isdirectory(searcher#utils#Mkdir())
+		let cache_file = searcher#utils#GetCacheFile()
+		let nr = bufwinnr(cache_file)
+		if nr < 0
+			execute printf('silent keepalt topleft vertical split %s', searcher#utils#GetCacheFile())
+			call searcher#win#Init()
+		else
+			execute printf('%dwincmd w', nr)
+		endif
+		execute 'silent %delete'
+		execute 'silent write'
+		setlocal nomodifiable
+		let s:win_id = win_getid()
+	endif
 endfunction
 
-function! searcher#win#Close()
-    let nr = bufwinnr(s:MAIN_BUF_NAME)
-    if nr != 0
-        execute 'bdelete ' . s:MAIN_BUF_NAME
-    else
-        let searcher_buf_listed = buflisted(s:MAIN_BUF_NAME)
-        if searcher_buf_listed == 1
-            execute 'bdelete ' . s:MAIN_BUF_NAME
-        endif
-    endif
-endfunction
-
-function! searcher#win#AutoCloseHiddensearcherBuf()
-    let nr = bufwinnr(s:MAIN_BUF_NAME)
-    if nr == -1
-        let searcher_buf_listed = buflisted(s:MAIN_BUF_NAME)
-        if searcher_buf_listed == 1
-            execute 'bdelete ' . s:MAIN_BUF_NAME
-        endif
-    endif
-endfunction
-
-function! searcher#win#InitsearcherBufWin()
-    setlocal modifiable
-    setlocal filetype=searcher
-    setlocal fileencoding=utf-8
-    setlocal nonumber
-    call searcher#win#SetMappings()
+function! searcher#win#Init()
+	setlocal filetype=searcher
+	setlocal fileencoding=utf-8
+	setlocal nonumber
+	setlocal nolist
+	setlocal autoread
+	call searcher#win#SetMappings()
 endfunction
 
 function! searcher#win#SetMappings()
-    for [operate, hotkeys] in items(g:searcher_mappings)
-        for hotkey in hotkeys
-            execute 'nnoremap <silent><buffer> ' . hotkey .
-                \ ' :call searcher#win#JumpTo("' . operate . '")<CR>'
-        endfor
-    endfor
+	for [operate, hotkeys] in items(g:searcher_mappings)
+		for hotkey in hotkeys
+			execute printf('nnoremap <silent><buffer> %s :call searcher#win#JumpToBy("%s")<CR>', hotkey, operate)
+		endfor
+	endfor
 endfunction
 
-function! searcher#win#Focus(buf_name)
-    let nr = winnr('$')
-    if len(a:buf_name) != 0
-        let nr = bufwinnr(a:buf_name)
-    endif
-    if nr > 0
-        execute nr . 'wincmd w'
-        return 1
-    endif
-    return 0
+function! searcher#win#Update(timer)
+	let job = searcher#cmd#GetJob()
+	if job == '' || job_status(job) != 'run'
+		call timer_stop(a:timer)
+	endif
+	execute 'silent checktime'
 endfunction
 
-function! searcher#win#JumpTo(way)
-    let [filename, line_num, column_num] = searcher#utils#FindTargetPos(line('.'), col('.'))
-    if bufwinnr(s:MAIN_BUF_NAME) == winnr('$')
-        if a:way == 'tab'
-            call searcher#win#JumpToTab(filename, line_num, column_num)
-        elseif a:way == 'tabs'
-            call searcher#win#JumpToTabSilently(filename, line_num, column_num)
-        else
-            execute 'silent keepalt botright vertical split'
-            if a:way !~ '.\+s$'
-                call searcher#win#JumpToFile(filename, line_num, column_num)
-            else
-                call searcher#win#JumpToFileSilently(filename, line_num, column_num)
-            endif
-        endif
-    else
-        if index(keys(s:operation_mappings), a:way) != -1
-            call searcher#win#Focus(s:caller_buf_name)
-            let func = s:operation_mappings[a:way]
-            execute 'call ' . func . '(filename, line_num, column_num)'
-        endif
-    endif
-endfunction
-
-function! searcher#win#JumpToFile(filename, line_num, column_num)
-    execute 'silent edit ' . fnameescape(a:filename)
-    call searcher#win#InitCallerBufWin()
-    call cursor(a:line_num, a:column_num)
-endfunction
-
-function! searcher#win#JumpToFileSilently(filename, line_num, column_num)
-    call searcher#win#JumpToFile(a:filename, a:line_num, a:column_num)
-    call searcher#win#Focus(s:MAIN_BUF_NAME)
+function! searcher#win#JumpToBy(way)
+	let [filename, line_num, column_num] = searcher#utils#FindTargetPos(line('.'), col('.'))
+	if winnr() == winnr('$')
+		if a:way == 'tab'
+			call searcher#win#JumpToTab(filename, line_num, column_num)
+		elseif a:way == 'tabs'
+			call searcher#win#JumpToTabSilently(filename, line_num, column_num)
+		else
+			execute 'silent keepalt botright vertical split'
+			if a:way !~ '.\+s$'
+				call searcher#win#JumpToFile(filename, line_num, column_num)
+			else
+				call searcher#win#JumpToFileSilently(filename, line_num, column_num)
+			endif
+		endif
+	else
+		call win_gotoid(s:caller_win_id)
+		let func = s:operation_mappings[a:way]
+		execute printf('call %s(filename, line_num, column_num)', func)
+	endif
 endfunction
 
 function! searcher#win#JumpToTab(filename, line_num, column_num)
-    execute 'silent tabedit ' . fnameescape(a:filename)
-    call cursor(a:line_num, a:column_num)
+	execute printf('silent tabedit %s', fnameescape(a:filename))
+	call cursor(a:line_num, a:column_num)
 endfunction
 
 function! searcher#win#JumpToTabSilently(filename, line_num, column_num)
-    execute 'silent tabedit ' . fnameescape(a:filename)
-    call cursor(a:line_num, a:column_num)
-    execute 'tabprevious'
-    call searcher#win#Focus(s:MAIN_BUF_NAME)
+	call searcher#win#JumpToTab(a:filename, a:line_num, a:column_num)
+	execute 'tabprevious'
+	execute printf('call win_gotoid(%d)', s:win_id)
+endfunction
+
+function! searcher#win#JumpToFile(filename, line_num, column_num)
+	execute printf('silent edit %s', fnameescape(a:filename))
+	call cursor(a:line_num, a:column_num)
+endfunction
+
+function! searcher#win#JumpToFileSilently(filename, line_num, column_num)
+	call searcher#win#JumpToFile(a:filename, a:line_num, a:column_num)
+	execute printf('call win_gotoid(%d)', s:win_id)
 endfunction
 
 function! searcher#win#JumpToSplit(filename, line_num, column_num)
-    execute 'silent split ' . fnameescape(a:filename)
-    call searcher#win#InitCallerBufWin()
-    call cursor(a:line_num, a:column_num)
+	execute printf('silent split %s', fnameescape(a:filename))
+	call cursor(a:line_num, a:column_num)
 endfunction
 
 function! searcher#win#JumpToSplitSilently(filename, line_num, column_num)
-    call searcher#win#JumpToSplit(a:filename, a:line_num, a:column_num)
-    call searcher#win#Focus(s:MAIN_BUF_NAME)
+	call searcher#win#JumpToSplit(a:filename, a:line_num, a:column_num)
+	execute printf('call win_gotoid(%d)', s:win_id)
 endfunction
 
 function! searcher#win#JumpToVSplit(filename, line_num, column_num)
-    execute 'silent vsplit ' . fnameescape(a:filename)
-    call searcher#win#InitCallerBufWin()
-    call cursor(a:line_num, a:column_num)
+	execute printf('silent vsplit %s', fnameescape(a:filename))
+	call cursor(a:line_num, a:column_num)
 endfunction
 
 function! searcher#win#JumpToVSplitSilently(filename, line_num, column_num)
-    call searcher#win#JumpToVSplit(a:filename, a:line_num, a:column_num)
-    call searcher#win#Focus(s:MAIN_BUF_NAME)
+	call searcher#win#JumpToVSplit(a:filename, a:line_num, a:column_num)
+	execute printf('call win_gotoid(%d)', s:win_id)
 endfunction
-
