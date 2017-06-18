@@ -16,13 +16,14 @@ vim.command('let s:case_sensitive = 1')
 for argv in argv_list[:-2]:
 	if argv in case_sensitive_options:
 		vim.command('let s:case_sensitive = 0')
+vim.command("let s:keyword = pyeval('argv_list[-2]')")
 vim.command('let argv = %s' % argv_list)
 EOF
 	let prefix_options = searcher#cmd#GetPrefixOptions()
 	let cmd = [g:searcher_cmd]
 	call extend(cmd, prefix_options)
-	let argv[len(argv) - 2] = searcher#cmd#TransformKeyword(argv[len(argv) - 2])
-	let s:keyword = argv[len(argv) - 2]
+	let s:keyword = searcher#cmd#TransformKeyword(s:keyword)
+	let argv[len(argv) - 2] = s:keyword
 	call extend(cmd, argv)
 	return cmd
 endfunction
