@@ -22,7 +22,6 @@ function! searcher#win#Open()
 		else
 			execute printf('%dwincmd w', nr)
 		endif
-		setlocal modifiable
 		execute 'silent %delete'
 		execute 'silent write'
 		setlocal nomodifiable
@@ -31,6 +30,7 @@ function! searcher#win#Open()
 endfunction
 
 function! searcher#win#Init()
+	setlocal modifiable
 	setlocal filetype=searcher
 	setlocal fileencoding=utf-8
 	setlocal nonumber
