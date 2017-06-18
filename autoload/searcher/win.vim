@@ -22,6 +22,7 @@ function! searcher#win#Open()
 		else
 			execute printf('%dwincmd w', nr)
 		endif
+		setlocal modifiable
 		execute 'silent %delete'
 		execute 'silent write'
 		setlocal nomodifiable
