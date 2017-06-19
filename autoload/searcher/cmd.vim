@@ -3,8 +3,10 @@ let s:index = []
 let s:job = ''
 let s:timer = 0
 
-let s:keyword = '""'
+let s:keyword = ''
 let s:case_sensitive = 1
+
+let s:start_time = ''
 
 function! searcher#cmd#Build(argv)
 python << EOF
@@ -52,9 +54,11 @@ function! searcher#cmd#Run(cmd)
 		let s:files = []
 		let s:index = []
 
+		let s:start_time = reltime()
+
 		let s:job = job_start(a:cmd, {
-			\ 'out_cb'  : 'searcher#cmd#OutCallback',
-			\ 'exit_cb' : 'searcher#cmd#ExitCallback',
+			\ 'out_cb'   : 'searcher#cmd#OutCallback',
+			\ 'close_cb' : 'searcher#cmd#CloseCallback',
 			\ })
 
 		call timer_stop(s:timer)
@@ -108,9 +112,10 @@ else:
 EOF
 endfunction
 
-function! searcher#cmd#ExitCallback(channel, msg)
+function! searcher#cmd#CloseCallback(channel)
 	execute 'silent checktime'
 	call timer_stop(s:timer)
+	echom printf('Searcher done! (elapsed time:%ss)', reltimestr(reltime(s:start_time)))
 endfunction
 
 function! searcher#cmd#GetJob()

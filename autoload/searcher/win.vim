@@ -12,7 +12,9 @@ let s:operation_mappings = {
 	\}
 
 function! searcher#win#Open()
-	let s:caller_win_id = win_getid()
+	if win_getid() != s:win_id
+		let s:caller_win_id = win_getid()
+	endif
 	if isdirectory(searcher#utils#Mkdir())
 		let cache_file = searcher#utils#GetCacheFile()
 		let nr = bufwinnr(cache_file)
@@ -21,16 +23,17 @@ function! searcher#win#Open()
 			call searcher#win#Init()
 		else
 			execute printf('%dwincmd w', nr)
+			set modifiable
 		endif
 		execute 'silent %delete'
 		execute 'silent write'
-		setlocal nomodifiable
+		set nomodifiable
 		let s:win_id = win_getid()
 	endif
 endfunction
 
 function! searcher#win#Init()
-	setlocal modifiable
+	set modifiable
 	setlocal filetype=searcher
 	setlocal fileencoding=utf-8
 	setlocal nonumber
