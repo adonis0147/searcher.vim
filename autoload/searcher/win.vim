@@ -57,13 +57,14 @@ endfunction
 
 function! searcher#win#JumpToBy(way)
 	let [filename, line_num, column_num] = searcher#utils#FindTargetPos(line('.'), col('.'))
-	if winnr() == winnr('$')
+	if win_id2win(s:caller_win_id) == 0
 		if a:way == 'tab'
 			call searcher#win#JumpToTab(filename, line_num, column_num)
 		elseif a:way == 'tabs'
 			call searcher#win#JumpToTabSilently(filename, line_num, column_num)
 		else
 			execute 'silent keepalt botright vertical split'
+			let s:caller_win_id = win_getid()
 			if a:way !~ '.\+s$'
 				call searcher#win#JumpToFile(filename, line_num, column_num)
 			else

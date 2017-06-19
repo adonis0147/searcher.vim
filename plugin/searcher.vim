@@ -1,17 +1,17 @@
 let s:searcher_mappings = {
-	\ 'open'	: ['<CR>', 'o'],
-	\ 'opens'	: ['go'],
-	\ 'tab'		: ['t'],
-	\ 'tabs'	: ['T'],
-	\ 'split'	: ['h'],
-	\ 'splits'	: ['H'],
-	\ 'vsplit'	: ['v'],
+	\ 'open'    : ['<CR>', 'o'],
+	\ 'opens'   : ['go'],
+	\ 'tab'     : ['t'],
+	\ 'tabs'    : ['T'],
+	\ 'split'   : ['h'],
+	\ 'splits'  : ['H'],
+	\ 'vsplit'  : ['v'],
 	\ 'vsplits' : ['V'],
 	\}
 
 let s:searcher_view_mapping = {
-	\ 'next'	: '<c-j>',
-	\ 'prev'	: '<c-k>',
+	\ 'next' : '<c-j>',
+	\ 'prev' : '<c-k>',
 	\}
 
 if !exists('g:searcher_cmd')
