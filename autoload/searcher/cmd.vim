@@ -35,13 +35,13 @@ function! searcher#cmd#TransformKeyword(keyword)
 endfunction
 
 function! searcher#cmd#GetPrefixOptions()
-	if g:searcher_cmd == 'sift'
-		let prefix_options = ['--binary-skip', '--no-color', '-n', '-C', g:searcher_context]
-		return prefix_options
-	elseif g:searcher_cmd == 'rg'
+	if g:searcher_cmd == 'rg'
 		let prefix_options = ['--color=never', '--no-heading', '-n', '-C', g:searcher_context]
 		return prefix_options
-	elseif index(['ack', 'ag', 'pt'], g:searcher_cmd) >= 0
+	elseif g:searcher_cmd == 'sift'
+		let prefix_options = ['--binary-skip', '--no-color', '-n', '-C', g:searcher_context]
+		return prefix_options
+	elseif g:searcher_cmd == 'pt'
 		let prefix_options = ['--nocolor', '--nogroup', '-C', g:searcher_context]
 		return prefix_options
 	endif
@@ -76,7 +76,7 @@ import vim
 num_files = int(vim.eval('num_files'))
 last_filename = vim.eval('filename')
 msg = vim.eval('a:msg')
-tokens = re.split(r'(-\d+-|:\d+:)', msg)
+tokens = re.split(r'([-:]\d+[-:])', msg)
 indent = ' ' * int(vim.eval('g:searcher_result_indent'))
 
 def parse(tokens):
