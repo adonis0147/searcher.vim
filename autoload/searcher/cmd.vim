@@ -48,6 +48,17 @@ function! searcher#cmd#GetPrefixOptions()
 	return g:searcher_prefix_options
 endfunction
 
+function! searcher#cmd#Stop()
+	if s:job != ''
+		let channel = job_getchannel(s:job)
+		if ch_status(channel) != 'closed'
+			call ch_close(channel)
+			call job_stop(s:job)
+			call timer_stop(s:timer)
+		endif
+	endif
+endfunction
+
 function! searcher#cmd#Run(cmd)
 	call searcher#log#Debug('command: %s', a:cmd)
 	if bufwinnr(searcher#utils#GetCacheFile()) > 0
