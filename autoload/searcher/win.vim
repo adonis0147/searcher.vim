@@ -25,6 +25,7 @@ function! searcher#win#Open()
 			execute printf('%dwincmd w', nr)
 			set modifiable
 		endif
+		execute 'silent noreadonly'
 		execute 'silent %delete'
 		execute 'silent write'
 		set nomodifiable
