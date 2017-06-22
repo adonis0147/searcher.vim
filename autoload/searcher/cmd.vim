@@ -105,7 +105,7 @@ else:
 	if filename != last_filename:
 		if num_files > 0:
 			write_line('\n')
-		vim.command('call add(s:files, "%s")' % filename)
+		vim.command("call add(s:files, '%s')" % filename)
 		num_files += 1
 		write_line('%s\n' % filename)
 	write_line(content)
