@@ -5,3 +5,8 @@ function! searcher#Search(argv)
 	call searcher#cmd#Run(cmd)
 	call searcher#view#highlight(searcher#cmd#GetKeyword())
 endfunction
+
+function! searcher#Stop()
+	call searcher#cmd#Stop()
+	execute 'silent checktime'
+endfunction
