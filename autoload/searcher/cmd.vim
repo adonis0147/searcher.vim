@@ -1,7 +1,6 @@
 let s:files = []
 let s:index = []
 let s:job = ''
-let s:timer = 0
 
 let s:keyword = ''
 let s:case_sensitive = 1
@@ -54,7 +53,6 @@ function! searcher#cmd#Stop()
 		if ch_status(channel) != 'closed'
 			call ch_close(channel)
 			call job_stop(s:job)
-			call timer_stop(s:timer)
 		endif
 	endif
 endfunction
@@ -68,12 +66,10 @@ function! searcher#cmd#Run(cmd)
 		let s:start_time = reltime()
 
 		let s:job = job_start(a:cmd, {
+			\ 'out_mode' : 'raw',
 			\ 'out_cb'   : 'searcher#cmd#OutCallback',
 			\ 'close_cb' : 'searcher#cmd#CloseCallback',
 			\ })
-
-		call timer_stop(s:timer)
-		let s:timer = timer_start(g:searcher_timer_interval, 'searcher#win#Update', {'repeat' : -1})
 	endif
 endfunction
 
@@ -81,51 +77,26 @@ function! searcher#cmd#OutCallback(channel, msg)
 	let num_files = len(s:files)
 	let filename = num_files ? s:files[num_files - 1] : ''
 python << EOF
-import os
-import re
 import vim
-num_files = int(vim.eval('num_files'))
-last_filename = vim.eval('filename')
+import parser
 msg = vim.eval('a:msg')
-tokens = re.split(r'([-:]\d+[-:])', msg)
-indent = ' ' * int(vim.eval('g:searcher_result_indent'))
-
-def parse(tokens):
-	if len(tokens) == 3:
-		filename, content = tokens[0], '%s%s%s\n' % (tokens[1][1:], indent, tokens[2])
-	else:
-		filename = tokens[0]
-		i = 0
-		while not os.path.isfile(filename) and i + 2 < len(tokens) - 1:
-			filename = '%s%s%s' % (filename, tokens[i + 1], tokens[i + 2])
-			i += 2
-		i += 1
-		if i < len(tokens) - 1:
-			content = '%s%s%s\n' % (tokens[i][1:], indent, ''.join(tokens[i + 1:]))
-	return filename, content
-
-def write_line(content):
-	with open(vim.eval('searcher#utils#GetCacheFile()'), 'a') as f:
-		f.write(content)
-	vim.command('call add(s:index, %d)' % (num_files - 1))
-
-if len(tokens) == 1:
-	write_line('%s\n' % tokens[0])
-else:
-	filename, content = parse(tokens)
-	if filename != last_filename:
-		if num_files > 0:
-			write_line('\n')
-		vim.command("call add(s:files, '%s')" % filename)
-		num_files += 1
-		write_line('%s\n' % filename)
-	write_line(content)
+filename = vim.eval('filename')
+num_files = int(vim.eval('num_files'))
+indent = int(vim.eval('g:searcher_result_indent'))
+text, files, index = parser.parse(msg, filename, num_files, indent)
+cache_file = vim.eval('searcher#utils#GetCacheFile()')
+with open(cache_file, 'a') as f:
+	f.write(text)
+vim.command("let files = pyeval('files')")
+vim.command("let index = pyeval('index')")
 EOF
+call extend(s:files, files)
+call extend(s:index, index)
+execute 'silent checktime'
 endfunction
 
 function! searcher#cmd#CloseCallback(channel)
 	execute 'silent checktime'
-	call timer_stop(s:timer)
 	echom printf('Searcher done! (elapsed time:%ss)', reltimestr(reltime(s:start_time)))
 endfunction
 

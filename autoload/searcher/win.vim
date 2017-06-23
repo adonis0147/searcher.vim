@@ -51,14 +51,6 @@ function! searcher#win#SetMappings()
 	endfor
 endfunction
 
-function! searcher#win#Update(timer)
-	let job = searcher#cmd#GetJob()
-	if job == '' || job_status(job) != 'run'
-		call timer_stop(a:timer)
-	endif
-	execute 'silent checktime'
-endfunction
-
 function! searcher#win#JumpToBy(way)
 	let [filename, line_num, column_num] = searcher#utils#FindTargetPos(line('.'), col('.'))
 	if win_id2win(s:caller_win_id) == 0

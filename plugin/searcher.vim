@@ -26,10 +26,6 @@ if !exists('g:searcher_prefix_options')
 	let g:searcher_prefix_options = []
 endif
 
-if !exists('g:searcher_timer_interval')
-	let g:searcher_timer_interval = 1000
-endif
-
 if !exists('g:searcher_result_indent')
 	let g:searcher_result_indent = 2
 endif
@@ -45,6 +41,12 @@ endif
 if !exists('g:searcher_case_sensitive_options')
     let g:searcher_case_sensitive_options = ['-i', '--ignore-case']
 endif
+
+function! s:Init()
+	call searcher#python#Init()
+endfunction
+
+call s:Init()
 
 function! s:CleanUp()
 	let cache_file = searcher#utils#GetCacheFile()
