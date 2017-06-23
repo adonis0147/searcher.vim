@@ -6,6 +6,7 @@ let s:keyword = ''
 let s:case_sensitive = 1
 
 let s:start_time = ''
+let s:last_update_time = ''
 
 function! searcher#cmd#Build(argv)
 python << EOF
@@ -62,6 +63,7 @@ function! searcher#cmd#Run(cmd)
 		let s:index = []
 
 		let s:start_time = reltime()
+		let s:last_update_time = reltime()
 
 		let s:job = job_start(a:cmd, {
 			\ 'out_mode' : 'raw',
@@ -87,7 +89,12 @@ vim.command("let index = pyeval('index')")
 EOF
 call extend(s:files, files)
 call extend(s:index, index)
-execute 'silent checktime'
+
+let elapsed_time = reltimefloat(reltime(s:last_update_time))
+if elapsed_time > g:searcher_update_interval
+	let s:last_update_time = reltime()
+	execute 'silent checktime'
+endif
 endfunction
 
 function! searcher#cmd#CloseCallback(channel)

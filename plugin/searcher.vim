@@ -34,6 +34,10 @@ if !exists('g:searcher_mappings')
 	let g:searcher_mappings = s:searcher_mappings
 endif
 
+if !exists('g:searcher_update_interval')
+	let g:searcher_update_interval = 1.0
+endif
+
 if !exists('g:searcher_view_mapping')
 	let g:searcher_view_mapping = s:searcher_view_mapping
 endif
