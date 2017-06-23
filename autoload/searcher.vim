@@ -10,3 +10,12 @@ function! searcher#Stop()
 	call searcher#cmd#Stop()
 	execute 'silent checktime'
 endfunction
+
+function! searcher#View()
+	let keyword = searcher#cmd#GetKeyword()
+	if keyword != ''
+		call searcher#view#highlight(keyword)
+	endif
+endfunction
+
+autocmd FileType searcher call searcher#View()

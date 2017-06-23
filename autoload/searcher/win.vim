@@ -23,18 +23,18 @@ function! searcher#win#Open()
 			call searcher#win#Init()
 		else
 			execute printf('%dwincmd w', nr)
-			set modifiable
+			setlocal modifiable
 		endif
-		set noreadonly
+		setlocal noreadonly
 		execute 'silent %delete'
 		execute 'silent write'
-		set nomodifiable
+		setlocal nomodifiable
 		let s:win_id = win_getid()
 	endif
 endfunction
 
 function! searcher#win#Init()
-	set modifiable
+	setlocal modifiable
 	setlocal filetype=searcher
 	setlocal fileencoding=utf-8
 	setlocal nonumber
