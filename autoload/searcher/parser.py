@@ -7,7 +7,7 @@ import re
 def parse(msg, last_filename, num_files, indent=2):
 	files, text, index = [], [], []
 	separator = ' ' * indent
-	lines = msg.split('\n')
+	lines = msg.splitlines()
 	for line in lines:
 		tokens = re.split(r'([-:]\d+[-:])', line)
 		if len(tokens) == 1:
