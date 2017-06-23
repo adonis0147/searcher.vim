@@ -9,8 +9,6 @@ let s:start_time = ''
 
 function! searcher#cmd#Build(argv)
 python << EOF
-import vim
-import shlex
 argv_list = shlex.split(vim.eval('a:argv'))
 case_sensitive_options = vim.eval('g:searcher_case_sensitive_options')
 vim.command('let s:case_sensitive = 1')
@@ -77,14 +75,11 @@ function! searcher#cmd#OutCallback(channel, msg)
 	let num_files = len(s:files)
 	let filename = num_files ? s:files[num_files - 1] : ''
 python << EOF
-import vim
-import parser
 msg = vim.eval('a:msg')
 filename = vim.eval('filename')
 num_files = int(vim.eval('num_files'))
 indent = int(vim.eval('g:searcher_result_indent'))
 text, files, index = parser.parse(msg, filename, num_files, indent)
-cache_file = vim.eval('searcher#utils#GetCacheFile()')
 with open(cache_file, 'a') as f:
 	f.write(text)
 vim.command("let files = pyeval('files')")

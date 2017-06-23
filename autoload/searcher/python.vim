@@ -2,10 +2,12 @@ let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 
 function! searcher#python#Init()
 python << EOF
-import vim
 import os
+import vim
+import shlex
 sys.path.insert(0, vim.eval('s:plugin_path'))
 import parser
 sys.path.pop(0)
+cache_file = vim.eval('searcher#utils#GetCacheFile()')
 EOF
 endfunction
