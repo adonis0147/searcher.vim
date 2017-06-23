@@ -7,12 +7,12 @@ let s:searcher_mappings = {
 	\ 'splits'  : ['H'],
 	\ 'vsplit'  : ['v'],
 	\ 'vsplits' : ['V'],
-	\}
+	\ }
 
 let s:searcher_view_mapping = {
 	\ 'next' : '<c-j>',
 	\ 'prev' : '<c-k>',
-	\}
+	\ }
 
 if !exists('g:searcher_cmd')
 	let g:searcher_cmd = 'rg'

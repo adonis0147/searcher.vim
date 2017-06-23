@@ -9,7 +9,7 @@ let s:operation_mappings = {
 	\ 'splits'  : 'searcher#win#JumpToSplitSilently',
 	\ 'vsplit'  : 'searcher#win#JumpToVSplit',
 	\ 'vsplits' : 'searcher#win#JumpToVSplitSilently',
-	\}
+	\ }
 
 function! searcher#win#Open()
 	if win_getid() != s:win_id
