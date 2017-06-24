@@ -91,7 +91,7 @@ EOF
 	call extend(s:index, index)
 
 	let elapsed_time = reltimefloat(reltime(s:last_update_time))
-	if elapsed_time > g:searcher_update_interval
+	if g:searcher_update_interval >= 0 && elapsed_time > g:searcher_update_interval
 		let s:last_update_time = reltime()
 		execute 'silent checktime'
 	endif
