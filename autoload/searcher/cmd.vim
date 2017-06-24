@@ -8,6 +8,21 @@ let s:case_sensitive = 1
 let s:start_time = ''
 let s:last_update_time = ''
 
+let s:escape_mapping = {
+\ '^' : '\^',
+\ '$' : '\$',
+\ '.' : '\.',
+\ '|' : '\|',
+\ '?' : '\?',
+\ '*' : '\*',
+\ '+' : '\+',
+\ '(' : '\(',
+\ ')' : '\)',
+\ '[' : '\[',
+\ ']' : '\]',
+\ '-' : '\-',
+\ }
+
 function! searcher#cmd#Build(argv)
 python << EOF
 argv_list = shlex.split(vim.eval('a:argv'))
@@ -29,7 +44,18 @@ EOF
 endfunction
 
 function! searcher#cmd#TransformKeyword(keyword)
-	return substitute(a:keyword, '(', '\\(', 'g')
+	let characters = []
+	let i = 0
+	while i < len(a:keyword)
+		let c = a:keyword[i]
+		if has_key(s:escape_mapping, c)
+			call add(characters, s:escape_mapping[c])
+		else
+			call add(characters, c)
+		endif
+		let i = i + 1
+	endwhile
+	return join(characters, '')
 endfunction
 
 function! searcher#cmd#GetPrefixOptions()
