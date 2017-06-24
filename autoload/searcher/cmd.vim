@@ -66,23 +66,23 @@ function! searcher#cmd#Run(cmd)
 		let s:last_update_time = reltime()
 
 		let s:job = job_start(a:cmd, {
+			\ 'out_mode' : 'raw',
 			\ 'out_cb'   : 'searcher#cmd#OutCallback',
 			\ 'close_cb' : 'searcher#cmd#CloseCallback',
 			\ })
 python << EOF
 files = []
 index = []
+remaining = ''
 EOF
 	endif
 endfunction
 
 function! searcher#cmd#OutCallback(channel, msg)
 python << EOF
-lines = [vim.eval('a:msg')]
-while vim.eval('ch_status(a:channel)') == 'buffered':
-	lines.append(vim.eval('ch_read(a:channel)'))
+msg = '%s%s' % (remaining, vim.eval('a:msg'))
 files_size, index_size = len(files), len(index)
-text = parser.parse(lines, files, index, int(vim.eval('g:searcher_result_indent')))
+text, remaining = parser.parse(msg, files, index, int(vim.eval('g:searcher_result_indent')))
 with open(cache_file, 'a') as f:
 	f.write('%s\n' % text)
 vim.command("let files = pyeval('files[files_size:]')")

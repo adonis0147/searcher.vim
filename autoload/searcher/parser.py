@@ -4,9 +4,11 @@
 import os
 import re
 
-def parse(lines, files, index, indent=2):
+def parse(msg, files, index, indent=2):
 	text = []
 	separator = ' ' * indent
+	pos = msg.rfind('\n')
+	lines = msg[:pos].splitlines()
 	for line in lines:
 		tokens = re.split(r'([-:]\d+[-:])', line)
 		if len(tokens) == 1:
@@ -19,7 +21,7 @@ def parse(lines, files, index, indent=2):
 				files.append(filename)
 				write_line(filename, text, files, index)
 			write_line(content, text, files, index)
-	return '\n'.join(text)
+	return '\n'.join(text), msg[pos + 1:]
 
 def _parse(tokens, separator):
 	if len(tokens) == 3:
