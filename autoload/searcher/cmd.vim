@@ -87,14 +87,14 @@ with open(cache_file, 'a') as f:
 vim.command("let files = pyeval('files')")
 vim.command("let index = pyeval('index')")
 EOF
-call extend(s:files, files)
-call extend(s:index, index)
+	call extend(s:files, files)
+	call extend(s:index, index)
 
-let elapsed_time = reltimefloat(reltime(s:last_update_time))
-if elapsed_time > g:searcher_update_interval
-	let s:last_update_time = reltime()
-	execute 'silent checktime'
-endif
+	let elapsed_time = reltimefloat(reltime(s:last_update_time))
+	if elapsed_time > g:searcher_update_interval
+		let s:last_update_time = reltime()
+		execute 'silent checktime'
+	endif
 endfunction
 
 function! searcher#cmd#CloseCallback(channel)
