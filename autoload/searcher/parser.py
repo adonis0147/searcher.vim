@@ -4,25 +4,22 @@
 import os
 import re
 
-def parse(msg, last_filename, num_files, indent=2):
-	files, text, index = [], [], []
+def parse(lines, files, index, indent=2):
+	text = []
 	separator = ' ' * indent
-	lines = msg.splitlines()
 	for line in lines:
 		tokens = re.split(r'([-:]\d+[-:])', line)
 		if len(tokens) == 1:
-			write_line(tokens[0], text, index, num_files)
+			write_line(tokens[0], text, files, index)
 		else:
 			filename, content = _parse(tokens, separator)
-			if filename != last_filename:
-				if num_files > 0:
-					write_line('', text, index, num_files)
+			if not files or filename != files[-1]:
+				if files:
+					write_line('', text, files, index)
 				files.append(filename)
-				last_filename = filename
-				num_files += 1
-				write_line(filename, text, index, num_files)
-			write_line(content, text, index, num_files)
-	return '\n'.join(text), files, index
+				write_line(filename, text, files, index)
+			write_line(content, text, files, index)
+	return '\n'.join(text)
 
 def _parse(tokens, separator):
 	if len(tokens) == 3:
@@ -38,7 +35,7 @@ def _parse(tokens, separator):
 			content = '%s%s%s' % (tokens[i][1:], separator, ''.join(tokens[i + 1:]))
 	return filename, content
 
-def write_line(content, text, index, num_files):
+def write_line(content, text, files, index):
 	text.append(content)
-	index.append(num_files - 1)
+	index.append(len(files) - 1)
 
