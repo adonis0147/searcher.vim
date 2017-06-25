@@ -1,8 +1,11 @@
 # searcher.vim
 
+Code search plugin for Vim 8.0+ powered by [rg](https://github.com/BurntSushi/ripgrep) / [sift](https://github.com/svent/sift) / [pt](https://github.com/monochromegane/the_platinum_searcher).
+
 ## Dependencies
+
 - Vim 8.0+
-- Search tools ([rg](https://github.com/BurntSushi/ripgrep), [sift](https://github.com/svent/sift), [pt](https://github.com/monochromegane/the_platinum_searcher))
+- Search tools ([rg](https://github.com/BurntSushi/ripgrep) / [sift](https://github.com/svent/sift) / [pt](https://github.com/monochromegane/the_platinum_searcher))
 
 ## Quick Start
 
