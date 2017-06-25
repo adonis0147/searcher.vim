@@ -1,6 +1,6 @@
 # searcher.vim
 
-Code search plugin for Vim 8.0+ powered by [rg](https://github.com/BurntSushi/ripgrep) / [sift](https://github.com/svent/sift) / [pt](https://github.com/monochromegane/the_platinum_searcher).
+Code search plugin for Vim powered by [rg](https://github.com/BurntSushi/ripgrep) / [sift](https://github.com/svent/sift) / [pt](https://github.com/monochromegane/the_platinum_searcher).
 
 ## Dependencies
 
@@ -25,3 +25,16 @@ Code search plugin for Vim 8.0+ powered by [rg](https://github.com/BurntSushi/ri
     v    to open in vertical split
     gv   to open in vertical split, keeping focus on the results
   ```
+
+## Example
+
+Type `:Searcher -t vim func .` (Use [rg](https://github.com/BurntSushi/ripgrep) as the search tool and the options `-t vim` for [rg](https://github.com/BurntSushi/ripgrep) is to search vim files.)
+
+![example](https://raw.githubusercontent.com/adonis0147/searcher.vim/master/example.gif)
+
+**Note:** The input options must be valid for the chosen search tool (default: rg).
+
+## Extras
+
+1. For convenience, you can add a shortcut by setting `nnoremap <leader>a :Searcher -t %:e <C-R><C-W> .`. As a result, you can search the word under the cursor in files with the same extension.
+
