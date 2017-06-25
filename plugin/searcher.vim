@@ -34,8 +34,22 @@ if !exists('g:searcher_mappings')
 	let g:searcher_mappings = s:searcher_mappings
 endif
 
-if !exists('g:searcher_update_interval')
-	let g:searcher_update_interval = 1.0
+if !exists('g:searcher_check_whether_under_terminal')
+	let g:searcher_check_whether_under_terminal = 1
+endif
+
+if g:searcher_check_whether_under_terminal
+	let g:searcher_under_terminal = !has('gui_running')
+else
+	let g:searcher_under_terminal = 0
+endif
+
+if g:searcher_under_terminal
+	let g:searcher_update_interval = -1
+else
+	if !exists('g:searcher_update_interval')
+		let g:searcher_update_interval = 1.0
+	endif
 endif
 
 if !exists('g:searcher_view_mapping')
