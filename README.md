@@ -36,5 +36,5 @@ Type `:Searcher -t vim func .` (Use [rg](https://github.com/BurntSushi/ripgrep) 
 
 ## Extras
 
-1. For convenience, you can add a shortcut by setting `nnoremap <leader>a :Searcher -t %:e <C-R><C-W> .`. As a result, you can search the word under the cursor in files with the same extension.
+1. For convenience, you can add a shortcut by setting `nnoremap <leader>a :Searcher -t %:e -S <C-R><C-W> .`. As a result, you can search the word under the cursor in files with the same extension. - search tool: rg
 
