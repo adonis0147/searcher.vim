@@ -108,7 +108,7 @@ function! searcher#cmd#OutCallback(channel, msg)
 python << EOF
 msg = '%s%s' % (remaining, vim.eval('a:msg'))
 files_size, index_size = len(files), len(index)
-text, remaining = parser.parse(msg, files, index, int(vim.eval('g:searcher_result_indent')))
+text, remaining = bootstrap.parse(msg, files, index, int(vim.eval('g:searcher_result_indent')))
 if text:
 	with open(cache_file, 'a') as f:
 		f.write('%s\n' % text)
