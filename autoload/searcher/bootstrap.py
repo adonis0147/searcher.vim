@@ -21,7 +21,7 @@ def is_case_sensitive(argv_list, options):
 		return False
 	elif smart_case:
 		return not keyword.islower()
-	return False
+	return True
 
 def parse(msg, files, index, indent=2):
 	text = []
