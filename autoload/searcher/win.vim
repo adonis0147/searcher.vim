@@ -115,3 +115,11 @@ function! searcher#win#JumpToVSplitSilently(filename, line_num, column_num)
 	call searcher#win#JumpToVSplit(a:filename, a:line_num, a:column_num)
 	execute printf('call win_gotoid(%d)', s:win_id)
 endfunction
+
+function! searcher#win#SetWinId(win_id)
+	let s:win_id = a:win_id
+endfunction
+
+function! searcher#win#SetCallerWinId(caller_win_id)
+	let s:caller_win_id = a:caller_win_id
+endfunction
