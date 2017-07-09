@@ -26,11 +26,9 @@ let s:escape_mapping = {
 function! searcher#cmd#Build(argv)
 python << EOF
 argv_list = shlex.split(vim.eval('a:argv'))
-case_sensitive_options = vim.eval('g:searcher_case_sensitive_options')
-vim.command('let s:case_sensitive = 1')
-for argv in argv_list[:-2]:
-	if argv in case_sensitive_options:
-		vim.command('let s:case_sensitive = 0')
+options = vim.eval('searcher#cmd#GetCaseOptions()')
+case_sensitive = bootstrap.is_case_sensitive(argv_list, options)
+vim.command('let s:case_sensitive = %d' % case_sensitive)
 vim.command("let s:keyword = pyeval('argv_list[-2]')")
 vim.command('let argv = %s' % argv_list)
 EOF
@@ -56,6 +54,21 @@ function! searcher#cmd#TransformKeyword(keyword)
 		let i = i + 1
 	endwhile
 	return join(characters, '')
+endfunction
+
+function! searcher#cmd#GetCaseOptions()
+	let options = {
+		\ 'ignore-case'    : ['-i', '--ignore-case'],
+		\ 'case-sensitive' : [],
+		\ 'smart-case'     : ['-S', '--smart-case'],
+		\ }
+	if g:searcher_cmd == 'rg'
+		let options['case-sensitive'] = ['-s', '--case-sensitive']
+	elseif g:searcher_cmd == 'sift'
+		let options['smart-case'] = ['-s', '--smart-case']
+		let options['case-sensitive'] = ['-I', '--no-ignore-case']
+	endif
+	return options
 endfunction
 
 function! searcher#cmd#GetPrefixOptions()

@@ -4,6 +4,25 @@
 import os
 import re
 
+def is_case_sensitive(argv_list, options):
+	keyword = argv_list[-2]
+	ignore_case, case_sensitive, smart_case = False, False, False
+	for argv in argv_list[:-2]:
+		if argv in options['ignore-case']:
+			ignore_case = True
+		elif argv in options['case-sensitive']:
+			case_sensitive = True
+		elif argv in options['smart-case']:
+			smart_case = True
+
+	if case_sensitive:
+		return True
+	elif ignore_case:
+		return False
+	elif smart_case:
+		return not keyword.islower()
+	return False
+
 def parse(msg, files, index, indent=2):
 	text = []
 	separator = ' ' * indent

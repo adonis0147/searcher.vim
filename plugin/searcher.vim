@@ -56,10 +56,6 @@ if !exists('g:searcher_view_mapping')
 	let g:searcher_view_mapping = s:searcher_view_mapping
 endif
 
-if !exists('g:searcher_case_sensitive_options')
-    let g:searcher_case_sensitive_options = ['-i', '--ignore-case']
-endif
-
 if !exists('g:searcher_debug')
 	let g:searcher_debug = 0
 endif
