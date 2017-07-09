@@ -7,7 +7,7 @@ let s:operation_mappings = {
 	\ 'prev' : 'searcher#view#SearchPrevious()',
 	\}
 
-function! searcher#view#highlight(keyword)
+function! searcher#view#Highlight(keyword)
 	if searcher#cmd#IsKeywordCaseSensitive() == 1
 		let regex_for_case = '\C'
 	else

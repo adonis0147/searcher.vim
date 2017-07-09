@@ -3,7 +3,7 @@ function! searcher#Search(argv)
 	let cmd = searcher#cmd#Build(a:argv)
 	call searcher#win#Open()
 	call searcher#cmd#Run(cmd)
-	call searcher#view#highlight(searcher#cmd#GetKeyword())
+	call searcher#view#Highlight(searcher#cmd#GetKeyword())
 endfunction
 
 function! searcher#Stop()
@@ -14,7 +14,7 @@ endfunction
 function! searcher#View()
 	let keyword = searcher#cmd#GetKeyword()
 	if keyword != ''
-		call searcher#view#highlight(keyword)
+		call searcher#view#Highlight(keyword)
 	endif
 endfunction
 

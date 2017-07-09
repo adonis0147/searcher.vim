@@ -49,7 +49,7 @@ function! searcher#win#SetMappings()
 			execute printf('nnoremap <silent><buffer> %s :call searcher#win#JumpToBy("%s")<CR>', hotkey, operate)
 		endfor
 	endfor
-	execute 'nnoremap <silent><buffer> q :quit<CR>'
+	execute 'nnoremap <silent><buffer> q :q!<CR>'
 endfunction
 
 function! searcher#win#JumpToBy(way)
