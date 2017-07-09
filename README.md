@@ -16,7 +16,7 @@ Code search plugin for Vim powered by [rg](https://github.com/BurntSushi/ripgrep
 3. Jump to the corresponding position.  
   ```
     o    to open (same as Enter)
-    O    to open and close the quickfix window
+    O    to open and close the window
     go   to preview file, keeping focus on the results
     t    to open in new tab
     T    to open in new tab, keeping focus on the results
@@ -24,6 +24,7 @@ Code search plugin for Vim powered by [rg](https://github.com/BurntSushi/ripgrep
     H    to open in horizontal split, keeping focus on the results
     v    to open in vertical split
     gv   to open in vertical split, keeping focus on the results
+    q    to close window
   ```
 
 ## Example
