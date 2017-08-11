@@ -123,7 +123,7 @@ msg = '%s%s' % (remaining, vim.eval('a:msg'))
 files_size, index_size = len(files), len(index)
 text, remaining = bootstrap.parse(msg, files, index, int(vim.eval('g:searcher_result_indent')))
 if text:
-	with open(cache_file, 'a') as f:
+	with open(cache_file, 'ab') as f:
 		f.write('%s\n' % text)
 vim.command("let files = pyeval('files[files_size:]')")
 vim.command("let index = pyeval('index[index_size:]')")
