@@ -35,19 +35,18 @@ EOF
 	let prefix_options = searcher#cmd#GetPrefixOptions()
 	let cmd = [g:searcher_cmd]
 	call extend(cmd, prefix_options)
-	let s:keyword = searcher#cmd#TransformKeyword(s:keyword)
-	let argv[len(argv) - 2] = s:keyword
+	let argv[len(argv) - 2] = searcher#cmd#TransformKeyword(s:keyword, s:escape_mapping)
 	call extend(cmd, argv)
 	return cmd
 endfunction
 
-function! searcher#cmd#TransformKeyword(keyword)
+function! searcher#cmd#TransformKeyword(keyword, escape_mapping)
 	let characters = []
 	let i = 0
 	while i < len(a:keyword)
 		let c = a:keyword[i]
-		if has_key(s:escape_mapping, c)
-			call add(characters, s:escape_mapping[c])
+		if has_key(a:escape_mapping, c)
+			call add(characters, a:escape_mapping[c])
 		else
 			call add(characters, c)
 		endif

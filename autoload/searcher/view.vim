@@ -7,13 +7,32 @@ let s:operation_mappings = {
 	\ 'prev' : 'searcher#view#SearchPrevious()',
 	\}
 
+let s:escape_mapping = {
+\ '^' : '\^',
+\ '$' : '\$',
+\ '.' : '\.',
+\ '|' : '\|',
+\ '?' : '\?',
+\ '*' : '\*',
+\ '+' : '\+',
+\ '(' : '\(',
+\ ')' : '\)',
+\ '[' : '\[',
+\ ']' : '\]',
+\ '<' : '\<',
+\ '>' : '\>',
+\ '=' : '\=',
+\ }
+
 function! searcher#view#Highlight(keyword)
 	if searcher#cmd#IsKeywordCaseSensitive() == 1
 		let regex_for_case = '\C'
 	else
 		let regex_for_case = '\c'
 	endif
-	let s:keyword_pattern = printf('\v%s%s%s', regex_for_case, s:REGEX_PREFIX_FOR_KEYWORD, a:keyword)
+	let keyword = searcher#cmd#TransformKeyword(a:keyword, s:escape_mapping)
+	let s:keyword_pattern = printf('\v%s%s%s', regex_for_case, s:REGEX_PREFIX_FOR_KEYWORD, keyword)
+	call searcher#log#Debug("keyword_pattern: %s", s:keyword_pattern)
 	if s:highlight_id != -1
 		try
 			call matchdelete(s:highlight_id)
