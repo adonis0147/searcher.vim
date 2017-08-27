@@ -26,6 +26,13 @@ Code search plugin for Vim powered by [rg](https://github.com/BurntSushi/ripgrep
     gv   to open in vertical split, keeping focus on the results
     q    to close window
   ```
+## Commands
+- **Searcher [options] \<keyword\> \<path\>**  
+    Start searching.
+- **SearcherStop**  
+    Stop searching.
+- **SearcherClearAllCaches**  
+    Clear all caches which are stored in `$HOME/.cache/searcher`.
 
 ## Example
 
