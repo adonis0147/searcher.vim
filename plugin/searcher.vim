@@ -74,5 +74,6 @@ endfunction
 autocmd VimLeavePre * call s:CleanUp()
 
 command! -bang -nargs=* -complete=file Searcher call searcher#Search(<q-args>)
+command! -bang -nargs=* -complete=file SearcherCwd call searcher#SearchCwd(<q-args>)
 command! -bang -nargs=0 -complete=file SearcherStop call searcher#Stop()
 command! -bang -nargs=0 -complete=file SearcherClearAllCaches call searcher#ClearAllCaches()

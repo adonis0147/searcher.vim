@@ -29,6 +29,8 @@ Code search plugin for Vim powered by [rg](https://github.com/BurntSushi/ripgrep
 ## Commands
 - **Searcher [options] \<keyword\> \<path\>**  
     Start searching.
+- **SearcherCwd [options] \<keyword\>**  
+    Start searching in the current working directory (as given by :pwd).
 - **SearcherStop**  
     Stop searching.
 - **SearcherClearAllCaches**  

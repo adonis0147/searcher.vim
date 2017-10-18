@@ -6,6 +6,11 @@ function! searcher#Search(argv)
 	call searcher#view#Highlight(searcher#cmd#GetKeyword())
 endfunction
 
+function! searcher#SearchCwd(argv)
+	let argv = a:argv . ' ' . getcwd()
+	call searcher#Search(argv)
+endfunction
+
 function! searcher#Stop()
 	call searcher#cmd#Stop()
 	execute 'silent checktime'
