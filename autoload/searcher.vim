@@ -6,7 +6,7 @@ function! searcher#Search(argv)
 	call searcher#view#Highlight(searcher#cmd#GetKeyword())
 endfunction
 
-function! searcher#SearchCwd(argv)
+function! searcher#SearchCWD(argv)
 	let argv = a:argv . ' ' . getcwd()
 	call searcher#Search(argv)
 endfunction
