@@ -10,6 +10,7 @@ let s:operation_mappings = {
 	\ 'vsplit'  : 'searcher#win#JumpToVSplit',
 	\ 'vsplits' : 'searcher#win#JumpToVSplitSilently',
 	\ }
+let s:is_toggled = 0
 
 function! searcher#win#Open()
 	if win_getid() != s:win_id
@@ -29,7 +30,9 @@ function! searcher#win#Open()
 		execute 'silent %delete'
 		execute 'silent write'
 		setlocal nomodifiable
+		execute 'clearjumps'
 		let s:win_id = win_getid()
+		let s:is_toggled = 1
 	endif
 endfunction
 
@@ -60,24 +63,31 @@ function! searcher#win#JumpToBy(way)
 		elseif a:way == 'tabs'
 			call searcher#win#JumpToTabSilently(filename, line_num, column_num)
 		else
-			execute 'silent keepalt botright vertical split'
+			execute 'silent keepalt rightbelow vertical split'
 			let s:caller_win_id = win_getid()
-			if a:way !~ '.\+s$'
-				call searcher#win#JumpToFile(filename, line_num, column_num)
-			else
-				call searcher#win#JumpToFileSilently(filename, line_num, column_num)
+			call searcher#win#JumpToFile(filename, line_num, column_num)
+			execute 'clearjumps'
+			if a:way =~ '.\+s$'
+				execute printf('call win_gotoid(%d)', s:win_id)
 			endif
 		endif
 	else
-		call win_gotoid(s:caller_win_id)
+		if a:way !~ 'vsplit'
+			call win_gotoid(s:caller_win_id)
+		endif
 		let func = s:operation_mappings[a:way]
 		execute printf('call %s(filename, line_num, column_num)', func)
+	endif
+
+	if a:way !~ '.\+s$' && g:searcher_auto_close == 1
+		call searcher#win#Toggle()
 	endif
 endfunction
 
 function! searcher#win#JumpToTab(filename, line_num, column_num)
 	execute printf('silent tabedit %s', fnameescape(a:filename))
 	call cursor(a:line_num, a:column_num)
+	execute 'clearjumps'
 endfunction
 
 function! searcher#win#JumpToTabSilently(filename, line_num, column_num)
@@ -99,6 +109,7 @@ endfunction
 function! searcher#win#JumpToSplit(filename, line_num, column_num)
 	execute printf('silent split %s', fnameescape(a:filename))
 	call cursor(a:line_num, a:column_num)
+	execute 'clearjumps'
 endfunction
 
 function! searcher#win#JumpToSplitSilently(filename, line_num, column_num)
@@ -107,13 +118,27 @@ function! searcher#win#JumpToSplitSilently(filename, line_num, column_num)
 endfunction
 
 function! searcher#win#JumpToVSplit(filename, line_num, column_num)
-	execute printf('silent vsplit %s', fnameescape(a:filename))
+	execute printf('silent rightbelow vertical split %s', fnameescape(a:filename))
 	call cursor(a:line_num, a:column_num)
+	execute 'clearjumps'
 endfunction
 
 function! searcher#win#JumpToVSplitSilently(filename, line_num, column_num)
 	call searcher#win#JumpToVSplit(a:filename, a:line_num, a:column_num)
 	execute printf('call win_gotoid(%d)', s:win_id)
+endfunction
+
+function! searcher#win#Toggle()
+	if s:is_toggled == 1
+		execute printf('bdelete %s', searcher#utils#GetCacheFile())
+		let s:is_toggled = 0
+	else
+		execute printf('silent keepalt topleft vertical split %s', searcher#utils#GetCacheFile())
+		call searcher#win#Init()
+		setlocal nomodifiable
+		let s:win_id = win_getid()
+		let s:is_toggled = 1
+	endif
 endfunction
 
 function! searcher#win#SetWinId(win_id)

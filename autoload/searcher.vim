@@ -7,8 +7,7 @@ function! searcher#Search(argv)
 endfunction
 
 function! searcher#SearchCWD(argv)
-	let argv = a:argv . ' ' . getcwd()
-	call searcher#Search(argv)
+	call searcher#Search(printf('%s %s', a:argv, getcwd()))
 endfunction
 
 function! searcher#Stop()
@@ -38,3 +37,7 @@ function! searcher#View()
 endfunction
 
 autocmd FileType searcher call searcher#View()
+
+function! searcher#Toggle()
+	call searcher#win#Toggle()
+endfunction

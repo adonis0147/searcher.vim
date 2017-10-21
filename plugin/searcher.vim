@@ -60,6 +60,10 @@ if !exists('g:searcher_debug')
 	let g:searcher_debug = 0
 endif
 
+if !exists('g:searcher_auto_close')
+	let g:searcher_auto_close = 1
+endif
+
 function! s:Init()
 	call searcher#python#Init()
 endfunction
@@ -77,3 +81,4 @@ command! -bang -nargs=* -complete=file Searcher call searcher#Search(<q-args>)
 command! -bang -nargs=* -complete=file SearcherCWD call searcher#SearchCWD(<q-args>)
 command! -bang -nargs=0 -complete=file SearcherStop call searcher#Stop()
 command! -bang -nargs=0 -complete=file SearcherClearAllCaches call searcher#ClearAllCaches()
+command! -bang -nargs=0 -complete=file SearcherToggle call searcher#Toggle()
