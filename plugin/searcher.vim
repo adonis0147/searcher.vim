@@ -1,12 +1,12 @@
 let s:searcher_mappings = {
-	\ 'open'    : ['<CR>', 'o'],
+	\ 'open'    : ['<CR>', '<c-o>'],
 	\ 'opens'   : ['go'],
-	\ 'tab'     : ['t'],
-	\ 'tabs'    : ['T'],
-	\ 'split'   : ['h'],
-	\ 'splits'  : ['H'],
-	\ 'vsplit'  : ['v'],
-	\ 'vsplits' : ['V'],
+	\ 'tab'     : ['<c-t>'],
+	\ 'tabs'    : ['gt'],
+	\ 'split'   : ['<c-h>'],
+	\ 'splits'  : ['gh'],
+	\ 'vsplit'  : ['<c-v>'],
+	\ 'vsplits' : ['gv'],
 	\ }
 
 let s:searcher_view_mapping = {
