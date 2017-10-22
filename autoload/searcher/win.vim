@@ -93,8 +93,7 @@ function! searcher#win#JumpToBy(way)
 	endif
 
 	if a:way !~ '.\+s$' && g:searcher_auto_close == 1
-		call searcher#win#
-		()
+		call searcher#win#Toggle()
 	endif
 endfunction
 
