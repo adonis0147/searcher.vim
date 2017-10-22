@@ -47,7 +47,7 @@ function! searcher#win#Init()
 	setlocal nolist
 	setlocal autoread
 	call searcher#win#SetMappings()
-	autocmd BufLeave <buffer> :call searcher#win#RecordCursor()
+	autocmd! BufLeave <buffer> :call searcher#win#Leave()
 endfunction
 
 function! searcher#win#SetMappings()
@@ -57,6 +57,10 @@ function! searcher#win#SetMappings()
 		endfor
 	endfor
 	execute 'nnoremap <silent><buffer> q :SearcherToggle<CR>'
+endfunction
+
+function! searcher#win#Leave()
+	let [s:last_line, s:last_column] = [line('.'), col('.')]
 endfunction
 
 function! searcher#win#JumpToBy(way)
@@ -153,8 +157,4 @@ endfunction
 
 function! searcher#win#SetCallerWinId(caller_win_id)
 	let s:caller_win_id = a:caller_win_id
-endfunction
-
-function! searcher#win#RecordCursor()
-	let [s:last_line, s:last_column] = [line('.'), col('.')]
 endfunction
