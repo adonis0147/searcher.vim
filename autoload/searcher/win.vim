@@ -137,6 +137,7 @@ function! searcher#win#Toggle()
 		execute printf('bdelete %s', searcher#utils#GetCacheFile())
 		let s:is_toggled = 0
 	else
+		let s:caller_win_id = win_getid()
 		execute printf('silent keepalt topleft vertical split %s', searcher#utils#GetCacheFile())
 		call searcher#win#Init()
 		setlocal nomodifiable
