@@ -63,6 +63,11 @@ function! searcher#win#Leave()
 	let [s:last_line, s:last_column] = [line('.'), col('.')]
 endfunction
 
+function! searcher#win#Quit()
+	call searcher#win#SetCallerWinId(0)
+	call searcher#win#Toggle()
+endfunction
+
 function! searcher#win#JumpToBy(way)
 	let [filename, line_num, column_num] = searcher#utils#FindTargetPos(line('.'), col('.'))
 	if win_id2win(s:caller_win_id) == 0
@@ -88,7 +93,8 @@ function! searcher#win#JumpToBy(way)
 	endif
 
 	if a:way !~ '.\+s$' && g:searcher_auto_close == 1
-		call searcher#win#Toggle()
+		call searcher#win#
+		()
 	endif
 endfunction
 
