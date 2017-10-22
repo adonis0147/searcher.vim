@@ -11,6 +11,8 @@ let s:operation_mappings = {
 	\ 'vsplits' : 'searcher#win#JumpToVSplitSilently',
 	\ }
 let s:is_toggled = 0
+let s:last_line = 1
+let s:last_column = 1
 
 function! searcher#win#Open()
 	if win_getid() != s:win_id
@@ -33,6 +35,7 @@ function! searcher#win#Open()
 		execute 'clearjumps'
 		let s:win_id = win_getid()
 		let s:is_toggled = 1
+		let [s:last_line, s:last_column] = [1, 1]
 	endif
 endfunction
 
@@ -44,6 +47,7 @@ function! searcher#win#Init()
 	setlocal nolist
 	setlocal autoread
 	call searcher#win#SetMappings()
+	autocmd BufLeave <buffer> :call searcher#win#RecordCursor()
 endfunction
 
 function! searcher#win#SetMappings()
@@ -52,7 +56,7 @@ function! searcher#win#SetMappings()
 			execute printf('nnoremap <silent><buffer> %s :call searcher#win#JumpToBy("%s")<CR>', hotkey, operate)
 		endfor
 	endfor
-	execute 'nnoremap <silent><buffer> q :q!<CR>'
+	execute 'nnoremap <silent><buffer> q :SearcherToggle<CR>'
 endfunction
 
 function! searcher#win#JumpToBy(way)
@@ -138,6 +142,7 @@ function! searcher#win#Toggle()
 		setlocal nomodifiable
 		let s:win_id = win_getid()
 		let s:is_toggled = 1
+		call cursor(s:last_line, s:last_column)
 	endif
 endfunction
 
@@ -147,4 +152,8 @@ endfunction
 
 function! searcher#win#SetCallerWinId(caller_win_id)
 	let s:caller_win_id = a:caller_win_id
+endfunction
+
+function! searcher#win#RecordCursor()
+	let [s:last_line, s:last_column] = [line('.'), col('.')]
 endfunction
