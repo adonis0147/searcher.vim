@@ -33,7 +33,7 @@ function! searcher#View()
 	if keyword != ''
 		call searcher#view#Highlight(keyword)
 	endif
-	autocmd QuitPre <buffer> :call searcher#win#SetCallerWinId(0)
+	autocmd! QuitPre <buffer> :call searcher#win#Quit()
 endfunction
 
 autocmd FileType searcher call searcher#View()
