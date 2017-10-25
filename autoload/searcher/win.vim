@@ -42,7 +42,6 @@ endfunction
 function! searcher#win#Init()
 	setlocal modifiable
 	setlocal filetype=searcher
-	setlocal fileencoding=utf-8
 	setlocal nonumber
 	setlocal nolist
 	setlocal autoread
