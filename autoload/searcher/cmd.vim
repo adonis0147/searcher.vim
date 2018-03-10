@@ -24,12 +24,12 @@ let s:escape_mapping = {
 \ }
 
 function! searcher#cmd#Build(argv)
-python << EOF
+exec python#PythonUntilEOF()
 argv_list = shlex.split(vim.eval('a:argv'))
 options = vim.eval('searcher#cmd#GetCaseOptions()')
 case_sensitive = bootstrap.is_case_sensitive(argv_list, options)
 vim.command('let s:case_sensitive = %d' % case_sensitive)
-vim.command("let s:keyword = pyeval('argv_list[-2]')")
+vim.command("let s:keyword = %s('argv_list[-2]')" % pyeval)
 vim.command('let argv = %s' % argv_list)
 EOF
 	let prefix_options = searcher#cmd#GetPrefixOptions()
@@ -108,7 +108,7 @@ function! searcher#cmd#Run(cmd)
 			\ 'out_cb'   : 'searcher#cmd#OutCallback',
 			\ 'close_cb' : 'searcher#cmd#CloseCallback',
 			\ })
-python << EOF
+exec python#PythonUntilEOF()
 files = []
 index = []
 remaining = ''
@@ -117,15 +117,15 @@ EOF
 endfunction
 
 function! searcher#cmd#OutCallback(channel, msg)
-python << EOF
+exec python#PythonUntilEOF()
 msg = '%s%s' % (remaining, vim.eval('a:msg'))
 files_size, index_size = len(files), len(index)
 text, remaining = bootstrap.parse(msg, files, index, int(vim.eval('g:searcher_result_indent')))
 if text:
 	with open(cache_file, 'ab') as f:
-		f.write('%s\n' % text)
-vim.command("let files = pyeval('files[files_size:]')")
-vim.command("let index = pyeval('index[index_size:]')")
+		f.write(text)
+vim.command("let files = %s('files[files_size:]')" % pyeval)
+vim.command("let index = %s('index[index_size:]')" % pyeval)
 EOF
 	call extend(s:files, files)
 	call extend(s:index, index)

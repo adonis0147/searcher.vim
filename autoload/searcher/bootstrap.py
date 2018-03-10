@@ -3,6 +3,7 @@
 
 import os
 import re
+import sys
 
 def is_case_sensitive(argv_list, options):
 	keyword = argv_list[-2]
@@ -40,7 +41,12 @@ def parse(msg, files, index, indent=2):
 				files.append(filename)
 				write_line(filename, text, files, index)
 			write_line(content, text, files, index)
-	return '\n'.join(text), msg[pos:]
+	text.append('')
+
+	result = '\n'.join(text)
+	if sys.version_info[0] >= 3:
+		result = result.encode()
+	return result, msg[pos:]
 
 def _parse(tokens, separator):
 	if len(tokens) == 3:

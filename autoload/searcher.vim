@@ -16,7 +16,7 @@ function! searcher#Stop()
 endfunction
 
 function! searcher#ClearAllCaches()
-python << EOF
+exec python#PythonUntilEOF()
 cache_dir = vim.eval('searcher#utils#Mkdir()')
 for filename in os.listdir(cache_dir):
 	filename = '%s/%s' % (cache_dir, filename)
